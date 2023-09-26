@@ -103,7 +103,7 @@ matrix_t multiply_matrix(int n, matrix_t matrix_a, matrix_t matrix_b)
 
 matrix_t par_multiply_matrix(int n, matrix_t matrix_a, matrix_t matrix_b, int num_threads)
 {
-  matrix_t matrix_result = create_matrix(n);
+  matrix_t matrix_c = create_matrix(n);
   matrix_t matrix_bt = transpose(n, matrix_b);
 
   omp_set_num_threads(num_threads);
@@ -116,14 +116,15 @@ matrix_t par_multiply_matrix(int n, matrix_t matrix_a, matrix_t matrix_b, int nu
       double result = 0.0;
       
       for (int k = 0; k < n; k++)
-        index_m(matrix_result, i, j) += index_m(matrix_a, i, k) * index_m(matrix_bt, j, k);
+        result += index_m(matrix_a, i, k) * index_m(matrix_bt, j, k);
 
-      index_m(matrix_result, i, j) = result;
+      index_m(matrix_c, i, j) = result;
     }
   }
 
   free_matrix(n, matrix_bt);
-  return matrix_result;
+
+  return matrix_c;
 }
 
 

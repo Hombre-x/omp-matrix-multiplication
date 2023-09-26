@@ -43,6 +43,7 @@ int main(int argc, char const *argv[])
       total_time[i] = ((double) (end_time - start_time));
     }
 
+    printf("\nResults:\n");
     for (int i = 0; i < 5; i++)
       printf("Total time with %2d thread(s) and size %d: %0.7f ms \n", threads[i], s,total_time[i] * 1000.0);
 
