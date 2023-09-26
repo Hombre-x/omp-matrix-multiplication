@@ -7,6 +7,7 @@
 int main(int argc, char const *argv[])
 {
 
+  // This loop represents the sizes of the matrices
   for (int s = 128; s <= 1024; s *= 2)
   {
     printf("==================================================\n");
@@ -14,9 +15,9 @@ int main(int argc, char const *argv[])
 
     int n = s;
 
-    double ** matrix_a = create_matrix(n);
-    double ** matrix_b = create_matrix(n);
-    double ** matrix_c = create_matrix(n);
+    matrix_t matrix_a = create_matrix(n);
+    matrix_t matrix_b = create_matrix(n);
+    matrix_t matrix_c = create_matrix(n);
 
 
     const int threads[5] = {1, 2, 4, 8, 12};
@@ -51,5 +52,6 @@ int main(int argc, char const *argv[])
 
     printf("==================================================\n\n");
   }  
+
   return EXIT_SUCCESS;
 }
