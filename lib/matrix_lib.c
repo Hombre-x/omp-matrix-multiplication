@@ -24,10 +24,6 @@ matrix_t create_matrix(int n)
   return matrix;
 }
 
-// double index_m(matrix_t matrix, int row, int col)
-// {
-//   return matrix.data[row * matrix.size + col];
-// }
 
 void set_m(matrix_t matrix, int row, int col, double value)
 {
@@ -35,8 +31,9 @@ void set_m(matrix_t matrix, int row, int col, double value)
 }
 
 
-matrix_t transpose(int n, matrix_t matrix)
+matrix_t transpose(matrix_t matrix)
 {
+  int n = matrix.size;
   matrix_t transposed_matrix = create_matrix(n);
 
   for (int i = 0; i < n; i++)
@@ -46,9 +43,11 @@ matrix_t transpose(int n, matrix_t matrix)
   return transposed_matrix;
 }
 
-matrix_t randomize_matrix(int n, matrix_t matrix) 
+matrix_t randomize_matrix(matrix_t matrix) 
 {
   srand(time(NULL));
+
+  int n = matrix.size;
 
   for (int i = 0; i < n; i++)
     for (int j = 0; j < n; j++)
@@ -57,13 +56,15 @@ matrix_t randomize_matrix(int n, matrix_t matrix)
   return matrix;
 }
 
-void free_matrix(int n, matrix_t matrix)
+void free_matrix(matrix_t matrix)
 {
   free(matrix.data);
 }
 
-void print_matrix(int n, matrix_t matrix)
+void print_matrix(matrix_t matrix)
 {
+  int n = matrix.size;
+
   for (int i = 0; i < n; i++)
   {
     printf("[");
@@ -75,36 +76,24 @@ void print_matrix(int n, matrix_t matrix)
   }
 }
 
-matrix_t multiply_matrix(int n, matrix_t matrix_a, matrix_t matrix_b)
+matrix_t multiply_matrix(matrix_t matrix_a, matrix_t matrix_b)
 {
+  int n = matrix_a.size;
   matrix_t matrix_c = create_matrix(n);
 
   for (int i = 0; i < n; i++)
-    for (int k = 0; k < n; k++)
-      for (int j = 0; j < n; j++)
+    for (int j = 0; j < n; j++)
+      for (int k = 0; k < n; k++)
         index_m(matrix_c, i, j) += index_m(matrix_a, i, k) * index_m(matrix_b, k, j);
 
   return matrix_c;
 }
 
-// double ** multiply_matrix_transposed(int n, double ** matrix_a, double ** matrix_b)
-// {
-//   double ** matrix_c = create_matrix(n);
-//   double ** matrix_bt = transpose(n, matrix_b);
-
-//   for (int i = 0; i < n; i++)
-//     for (int k = 0; k < n; k++)
-//       for (int j = 0; j < n; j++)
-//         matrix_c[i][j] += matrix_a[i][k] * matrix_bt[j][k];
-
-//   free_matrix(n, matrix_bt);
-//   return matrix_c;
-// }
-
-matrix_t par_multiply_matrix(int n, matrix_t matrix_a, matrix_t matrix_b, int num_threads)
+matrix_t par_multiply_matrix(matrix_t matrix_a, matrix_t matrix_b, int num_threads)
 {
+  int n = matrix_a.size;
   matrix_t matrix_c = create_matrix(n);
-  matrix_t matrix_bt = transpose(n, matrix_b);
+  matrix_t matrix_bt = transpose(matrix_b);
 
   omp_set_num_threads(num_threads);
 
@@ -122,20 +111,25 @@ matrix_t par_multiply_matrix(int n, matrix_t matrix_a, matrix_t matrix_b, int nu
     }
   }
 
-  free_matrix(n, matrix_bt);
+  free_matrix(matrix_bt);
 
   return matrix_c;
 }
 
 
-// double ** identity_matrix(int n)
-// {
-//   double ** matrix = calloc(n, sizeof(double *));
-//   for (int i = 0; i < n; i++)
-//     matrix[i] = calloc(n, sizeof(double));
+matrix_t identity_matrix(int n)
+{
+  double * data = calloc(n * n, sizeof(double));
+  if (data == NULL)
+  {
+    perror("Error allocating memory for matrix double pointer");
+    exit(EXIT_FAILURE);
+  }
 
-//   for (int i = 0; i < n; i++)
-//     matrix[i][i] = 1;
+  matrix_t matrix = {n, data};
 
-//   return matrix;
-// }
+  for (int i = 0; i < n; i++)
+    index_m(matrix, i, i) = 1;
+
+  return matrix;
+}
