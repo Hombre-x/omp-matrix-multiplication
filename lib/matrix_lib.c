@@ -2,6 +2,11 @@
 #include <time.h>
 #include <omp.h>
 
+typedef struct {
+  int size;
+  double * data; 
+} matrix_t;
+
 
 double ** create_matrix(int n)
 {
